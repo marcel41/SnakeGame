@@ -1,5 +1,5 @@
 # SnakeGame
 To play
-1.-download the repository
-2.-unzip the snake.jar
-3.- use the repository folder the command console ---> compile && run 
+1.-Download the repository
+2.-Unzip the snake.jar
+3.-In the repository folder use the command console ---> compile && run 
