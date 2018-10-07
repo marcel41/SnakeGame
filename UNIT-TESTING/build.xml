@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="COMP16212 Snake Game Test Suite" default="test-all" basedir=".">
+
+  <property name="src.dir"          value="."/>
+  <property name="test.dir"         value="."/>
+  <property name="build.dir"        value="."/>
+  <property name="lib.dir"          value="./lib" />
+  <property name="test.reports.dir" value="test_reports"/>
+	
+  <property name="testClassPrefix" value="GameTestsForEx"/>
+  <property name="testClassSuffix" value=".java"/>
+  <property name="exAtestClass"  value="${testClassPrefix}A${testClassSuffix}"/>
+  <property name="exBtestClass"  value="${testClassPrefix}B${testClassSuffix}"/>
+  <property name="exC1testClass" value="${testClassPrefix}C1${testClassSuffix}"/>
+  <property name="exC2testClass" value="${testClassPrefix}C2${testClassSuffix}"/>
+  <property name="exC3testClass" value="${testClassPrefix}C3${testClassSuffix}"/>
+  <property name="exDtestClass"  value="${testClassPrefix}D${testClassSuffix}"/>
+  <property name="exE1testClass" value="${testClassPrefix}E1${testClassSuffix}"/>
+  <property name="exE2testClass" value="${testClassPrefix}E2${testClassSuffix}"/>
+  <property name="exE3testClass" value="${testClassPrefix}E3${testClassSuffix}"/>
+  <property name="exE4testClass" value="${testClassPrefix}E4${testClassSuffix}"/>
+  <property name="exE5testClass" value="${testClassPrefix}E5${testClassSuffix}"/>
+  <property name="exFtestClass"  value="${testClassPrefix}F${testClassSuffix}"/>
+  <property name="exGtestClass"  value="${testClassPrefix}G${testClassSuffix}"/>
+  <property name="exHtestClass"  value="${testClassPrefix}H${testClassSuffix}"/>
+	
+
+  <path id="testing.class.path">
+    <pathelement location="${lib.dir}/junit-4.12.jar"/>
+    <pathelement location="${lib.dir}/hamcrest-all-1.3.jar"/>
+    <pathelement location="${lib.dir}/Snake.jar"/>
+    <pathelement location="${lib.dir}/snake-test-helper-1.0.jar"/>
+    <pathelement location="${build.dir}"/>
+  </path>
+
+
+  <target name="-init">
+    <mkdir dir="${test.reports.dir}"/>
+  </target>
+  
+  <target name="clean-all" description="Remove all files that can be regenerated.">
+    <delete>
+      <fileset dir="${build.dir}" includes="*.class"/>
+    </delete>
+    <delete dir="${test.reports.dir}"/>
+  </target>
+	
+  <target name="clean-tests" depends="-init"
+ 	  	  description="Remove all test results and reports.">
+    <delete>
+      <fileset dir="${test.reports.dir}" />
+    </delete>
+  </target>
+  
+  <target name="compile" description="Compile all Java classes, including test classes.">
+    <javac destdir="${build.dir}" includeantruntime="false">
+        <classpath refid="testing.class.path"/>
+    	<src path="${src.dir}"/>
+        <src path="${test.dir}"/>
+    </javac>
+  </target>
+	
+  <target name="-test" depends="-init, compile">
+    <junit printsummary="yes">
+      <classpath refid="testing.class.path"/>
+      <formatter type="xml"/>
+      <batchtest todir="${test.reports.dir}">
+		<fileset refid="tests-to-run" />
+      </batchtest>
+    </junit>
+  	
+    <junitreport todir="${test.reports.dir}">
+      <fileset dir="${test.reports.dir}">
+      	<include name="TEST-*.xml"/>
+      </fileset>
+      <report todir="${test.reports.dir}"/>
+    </junitreport>
+  	
+  	<!-- fix effects of bug in junitreport that creates incorrect URLs in
+  	     all-tests.html for the default package.
+  	     -->
+  	<copy file="${test.reports.dir}/all-tests.html"
+  		  tofile="${test.reports.dir}/all-tests-buggy.html"
+  		  overwrite="true"/>
+  	<exec executable="sh">
+  		<arg line="-c 'sed &quot;s/href=\&quot;\//href=\&quot;/g&quot; ${test.reports.dir}/all-tests-buggy.html > ${test.reports.dir}/all-tests-fixed.html'"/>
+  	</exec>
+  	<copy file="${test.reports.dir}/all-tests-fixed.html"
+  	  		  tofile="${test.reports.dir}/all-tests.html"
+  	  		  overwrite="true"/>
+  </target>
+  
+
+<!-- Run tests for exercise A only -->
+
+  <target name="-set-exA">
+	<fileset id="tests-to-run" dir="${test.dir}" file="${exAtestClass}"/>
+  </target>
+	
+  <target name="test-exA" depends="clean-tests, compile, -set-exA, -test"
+  		  description="Run the tests for exercise A."/>
+
+	
+<!-- Run tests for exercise B and all preceding exercises -->
+	
+  <target name="-set-exB">
+	<fileset id="tests-to-run" dir="${test.dir}">
+	  <include name="${exAtestClass}"/>
+	  <include name="${exBtestClass}"/>
+	</fileset>
+  </target>
+	
+  <target name="test-exB" depends="clean-tests, compile, -set-exB, -test"
+	      description="Run the tests for exercise B and all preceding exercises." />
+
+	
+<!-- Run tests for exercise C1 and all preceding exercises -->
+
+  <target name="-set-exC1">
+	<fileset id="tests-to-run" dir="${test.dir}">
+	  <include name="${exAtestClass}"/>
+	  <include name="${exBtestClass}"/>
+	  <include name="${exC1testClass}"/>
+	</fileset>
+  </target>
+	
+  <target name="test-exC1" depends="clean-tests, compile, -set-exC1, -test"
+    	  description="Run the tests for exercise C1 and all preceding exercises." />
+
+	
+<!-- Run tests for exercise C2 and all preceding exercises -->
+
+  <target name="-set-exC2">
+	<fileset id="tests-to-run" dir="${test.dir}">
+	  <include name="${exAtestClass}"/>
+	  <include name="${exBtestClass}"/>
+	  <include name="${exC1testClass}"/>
+	  <include name="${exC2testClass}"/>
+	</fileset>
+  </target>
+	
+  <target name="test-exC2" depends="clean-tests, compile, -set-exC2, -test"
+	      description="Run the tests for exercise C2 and all preceding exercises." />
+
+	
+<!-- Run tests for exercise C3 and all preceding exercises -->
+	
+  <target name="-set-exC3">
+	<fileset id="tests-to-run" dir="${test.dir}">
+	  <include name="${exAtestClass}"/>
+	  <include name="${exBtestClass}"/>
+	  <include name="${exC1testClass}"/>
+	  <include name="${exC2testClass}"/>
+	  <include name="${exC3testClass}"/>
+	</fileset>
+  </target>
+	
+  <target name="test-exC3" depends="clean-tests, compile, -set-exC3, -test"
+	      description="Run the tests for exercise C3 and all preceding exercises." />
+
+	
+<!-- Run tests for exercise D and all preceding exercises -->
+
+  <target name="-set-exD">
+	<fileset id="tests-to-run" dir="${test.dir}">
+	  <include name="${exAtestClass}"/>
+	  <include name="${exBtestClass}"/>
+	  <include name="${exC1testClass}"/>
+	  <include name="${exC2testClass}"/>
+	  <include name="${exC3testClass}"/>
+	  <include name="${exDtestClass}"/>
+	</fileset>
+  </target>
+	
+  <target name="test-exD" depends="clean-tests, compile, -set-exD, -test"
+    	  description="Run the tests for exercise D and all preceding exercises." />
+
+	
+<!-- Run tests for exercise E1 and all preceding exercises -->
+	
+  <target name="-set-exE1">
+	<fileset id="tests-to-run" dir="${test.dir}">
+	  <include name="${exAtestClass}"/>
+	  <include name="${exBtestClass}"/>
+	  <include name="${exC1testClass}"/>
+	  <include name="${exC2testClass}"/>
+	  <include name="${exC3testClass}"/>
+	  <include name="${exDtestClass}"/>
+	  <include name="${exE1testClass}"/>
+	</fileset>
+  </target>
+	
+  <target name="test-exE1" depends="clean-tests, compile, -set-exE1, -test"
+	      description="Run the tests for exercise E1 and all preceding exercises."/>
+
+	
+<!-- Run tests for exercise E2 and all preceding exercises -->
+	
+  <target name="-set-exE2">
+	<fileset id="tests-to-run" dir="${test.dir}">
+	  <include name="${exAtestClass}"/>
+	  <include name="${exBtestClass}"/>
+	  <include name="${exC1testClass}"/>
+	  <include name="${exC2testClass}"/>
+	  <include name="${exC3testClass}"/>
+	  <include name="${exDtestClass}"/>
+	  <include name="${exE1testClass}"/>
+	  <include name="${exE2testClass}"/>
+	</fileset>
+  </target>
+	
+  <target name="test-exE2" depends="clean-tests, compile, -set-exE2, -test"
+      	  description="Run the tests for exercise E2 and all preceding exercises."/>
+
+	
+<!-- Run tests for exercise E3 and all preceding exercises -->
+	
+  <target name="-set-exE3">
+	<fileset id="tests-to-run" dir="${test.dir}">
+	  <include name="${exAtestClass}"/>
+	  <include name="${exBtestClass}"/>
+	  <include name="${exC1testClass}"/>
+	  <include name="${exC2testClass}"/>
+	  <include name="${exC3testClass}"/>
+	  <include name="${exDtestClass}"/>
+	  <include name="${exE1testClass}"/>
+	  <include name="${exE2testClass}"/>
+	  <include name="${exE3testClass}"/>
+	</fileset>
+  </target>
+	
+  <target name="test-exE3" depends="clean-tests, compile, -set-exE3, -test"
+          description="Run the tests for exercise E3 and all preceding exercises." />
+	
+	
+<!-- Run tests for exercise E4 and all preceding exercises -->
+	
+  <target name="-set-exE4">
+	<fileset id="tests-to-run" dir="${test.dir}">
+	  <include name="${exAtestClass}"/>
+	  <include name="${exBtestClass}"/>
+	  <include name="${exC1testClass}"/>
+	  <include name="${exC2testClass}"/>
+	  <include name="${exC3testClass}"/>
+	  <include name="${exDtestClass}"/>
+	  <include name="${exE1testClass}"/>
+	  <include name="${exE2testClass}"/>
+	  <include name="${exE3testClass}"/>
+	  <include name="${exE4testClass}"/>
+	</fileset>
+  </target>
+	
+  <target name="test-exE4" depends="clean-tests, compile, -set-exE4, -test"
+          description="Run the tests for exercise E4 and all preceding exercises." />
+
+	
+<!-- Run tests for exercise E5 and all preceding exercises -->
+	
+  <target name="-set-exE5">
+	<fileset id="tests-to-run" dir="${test.dir}">
+	  <include name="${exAtestClass}"/>
+	  <include name="${exBtestClass}"/>
+	  <include name="${exC1testClass}"/>
+	  <include name="${exC2testClass}"/>
+	  <include name="${exC3testClass}"/>
+	  <include name="${exDtestClass}"/>
+	  <include name="${exE1testClass}"/>
+	  <include name="${exE2testClass}"/>
+	  <include name="${exE3testClass}"/>
+	  <include name="${exE4testClass}"/>
+	  <include name="${exE5testClass}"/>
+	</fileset>
+  </target>
+	
+  <target name="test-exE5" depends="clean-tests, compile, -set-exE5, -test"
+          description="Run the tests for exercise E5 and all preceding exercises." />
+
+	
+<!-- Run tests for exercise F and all preceding exercises -->
+	
+  <target name="-set-exF">
+	<fileset id="tests-to-run" dir="${test.dir}">
+	  <include name="${exAtestClass}"/>
+	  <include name="${exBtestClass}"/>
+	  <include name="${exC1testClass}"/>
+	  <include name="${exC2testClass}"/>
+	  <include name="${exC3testClass}"/>
+	  <include name="${exDtestClass}"/>
+	  <include name="${exE1testClass}"/>
+	  <include name="${exE2testClass}"/>
+	  <include name="${exE3testClass}"/>
+	  <include name="${exE4testClass}"/>
+	  <include name="${exE5testClass}"/>
+	  <include name="${exFtestClass}"/>
+	</fileset>
+  </target>
+	
+  <target name="test-exF" depends="clean-tests, compile, -set-exF, -test"
+          description="Run the tests for exercise F and all preceding exercises." />
+
+	
+<!-- Run tests for exercise G and all preceding exercises -->
+	
+  <target name="-set-exG">
+	<fileset id="tests-to-run" dir="${test.dir}">
+	  <include name="${exAtestClass}"/>
+	  <include name="${exBtestClass}"/>
+	  <include name="${exC1testClass}"/>
+	  <include name="${exC2testClass}"/>
+	  <include name="${exC3testClass}"/>
+	  <include name="${exDtestClass}"/>
+	  <include name="${exE1testClass}"/>
+	  <include name="${exE2testClass}"/>
+	  <include name="${exE3testClass}"/>
+	  <include name="${exE4testClass}"/>
+	  <include name="${exE5testClass}"/>
+	  <include name="${exFtestClass}"/>
+	  <include name="${exGtestClass}"/>
+	</fileset>
+  </target>
+	
+  <target name="test-exG" depends="clean-tests, compile, -set-exG, -test"
+          description="Run the tests for exercise G and all preceding exercises." />
+
+
+  <!-- Run tests for exercise H and all preceding exercises -->
+	
+  <target name="-set-exH">
+	<fileset id="tests-to-run" dir="${test.dir}">
+	  <include name="${exAtestClass}"/>
+	  <include name="${exBtestClass}"/>
+	  <include name="${exC1testClass}"/>
+	  <include name="${exC2testClass}"/>
+	  <include name="${exC3testClass}"/>
+	  <include name="${exDtestClass}"/>
+	  <include name="${exE1testClass}"/>
+	  <include name="${exE2testClass}"/>
+	  <include name="${exE3testClass}"/>
+	  <include name="${exE4testClass}"/>
+	  <include name="${exE5testClass}"/>
+	  <include name="${exFtestClass}"/>
+	  <include name="${exGtestClass}"/>
+	  <include name="${exHtestClass}"/>
+	</fileset>
+  </target>
+	
+  <target name="test-exH" depends="clean-tests, compile, -set-exH, -test"
+	      description="Run the tests for exercise H and all preceding exercises." />
+	
+  <target name="test-all" depends="test-exH"
+	      description="Run the whole unit test suite for the Snake Game.">
+  </target>
+	
+</project>
